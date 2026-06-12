@@ -589,13 +589,33 @@ impl ResponsesAdapter {
                 }
             }
             "response.output_text.delta" => {
-                if let Some(CurrentItem::Message {
-                    last_part: Some(part),
-                }) = &self.current
-                    && part == "output_text"
-                    && let Some(delta) = event.get("delta").and_then(Value::as_str)
-                {
-                    events.extend(self.push_text_delta(delta));
+                if let Some(delta) = event.get("delta").and_then(Value::as_str) {
+                    match &mut self.current {
+                        Some(CurrentItem::Message {
+                            last_part: Some(part),
+                        }) if part == "output_text" => {
+                            events.extend(self.push_text_delta(delta));
+                        }
+                        // Tolerate streams that skip the item/part bookkeeping
+                        // (e.g. test fakes): implicitly open a text block.
+                        Some(CurrentItem::Message { last_part }) if last_part.is_none() => {
+                            *last_part = Some("output_text".to_string());
+                            events.extend(self.push_text_delta(delta));
+                        }
+                        None => {
+                            self.current = Some(CurrentItem::Message {
+                                last_part: Some("output_text".to_string()),
+                            });
+                            self.output
+                                .content
+                                .push(ContentBlock::Text(crate::model::TextContent::default()));
+                            events.push(StreamEvent::TextStart {
+                                content_index: self.block_index(),
+                            });
+                            events.extend(self.push_text_delta(delta));
+                        }
+                        _ => {}
+                    }
                 }
             }
             "response.refusal.delta" => {

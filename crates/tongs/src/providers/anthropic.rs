@@ -3,13 +3,18 @@
 //! Ported from TS Pi's `anthropic.ts`. Both auth modes are supported: API key
 //! (`x-api-key`) and OAuth (`sk-ant-oat…` bearer), where the OAuth
 //! subscription path requires the Claude Code identity as the first system
-//! block, the `claude-code`/`oauth` beta headers, and Claude Code canonical
-//! tool-name casing.
+//! block, the Claude Code identity headers ([`claude_code_headers`]), and
+//! Claude Code canonical tool-name casing.
 //!
-//! Divergences from TS, by intent: no `eager_input_streaming` on tools (the
-//! legacy `fine-grained-tool-streaming-2025-05-14` beta is sent instead when
-//! tools are present); thinking is configured only when the caller sets a
-//! thinking level (None omits the field entirely).
+//! Divergences from TS, by intent: no `eager_input_streaming` on tools (on
+//! the API-key path the legacy `fine-grained-tool-streaming-2025-05-14` beta
+//! is sent instead when tools are present); thinking is configured only when
+//! the caller sets a thinking level (None omits the field entirely). The
+//! OAuth path sends the **full** Claude Code identity header set — beta
+//! flags, `user-agent`, the `X-Stainless-*` family, and fresh per-request
+//! UUIDs — ported (with attribution) from anvil's
+//! `anvil-temper-agent/src/provider/anthropic_oauth.rs`, the canonical
+//! smith-derived subscription workaround.
 
 use std::collections::HashMap;
 
@@ -34,8 +39,71 @@ pub const CLAUDE_CODE_SYSTEM_IDENTITY: &str =
 
 const ANTHROPIC_VERSION: &str = "2023-06-01";
 const FINE_GRAINED_TOOL_STREAMING_BETA: &str = "fine-grained-tool-streaming-2025-05-14";
-const OAUTH_BETAS: &str = "claude-code-20250219,oauth-2025-04-20";
-const CLAUDE_CLI_VERSION: &str = "2.1.75";
+
+/// The `anthropic-beta` flag set Claude Code sends on the subscription OAuth
+/// path. Copied from anvil's `anthropic_oauth.rs` so requests match the real
+/// client's wire shape.
+const OAUTH_BETAS: &str = concat!(
+    "claude-code-20250219,",
+    "oauth-2025-04-20,",
+    "interleaved-thinking-2025-05-14,",
+    "context-management-2025-06-27,",
+    "prompt-caching-scope-2026-01-05,",
+    "advisor-tool-2026-03-01,",
+    "advanced-tool-use-2025-11-20,",
+    "context-1m-2025-08-07,",
+    "effort-2025-11-24,",
+    "extended-cache-ttl-2025-04-11"
+);
+
+/// The user-agent Claude Code sends; kept verbatim with the rest of the
+/// identity header set.
+const CLAUDE_CODE_USER_AGENT: &str = "claude-cli/2.1.139 (external, sdk-cli)";
+
+/// Claude Code-compatible identity headers for the subscription OAuth path.
+///
+/// Carries no token material — only client identity. The per-request UUIDs
+/// (`x-client-request-id`, `X-Claude-Code-Session-Id`) are fresh on every
+/// call. The OAuth branch of [`Provider::stream`] sends these by default;
+/// model/entry/per-request headers still override any of them.
+///
+/// Ported from anvil's `request_headers()` (see module docs).
+pub fn claude_code_headers() -> Vec<(String, String)> {
+    vec![
+        (
+            "x-client-request-id".to_string(),
+            uuid::Uuid::new_v4().to_string(),
+        ),
+        ("anthropic-beta".to_string(), OAUTH_BETAS.to_string()),
+        (
+            "anthropic-version".to_string(),
+            ANTHROPIC_VERSION.to_string(),
+        ),
+        (
+            "user-agent".to_string(),
+            CLAUDE_CODE_USER_AGENT.to_string(),
+        ),
+        ("x-app".to_string(), "cli".to_string()),
+        (
+            "X-Claude-Code-Session-Id".to_string(),
+            uuid::Uuid::new_v4().to_string(),
+        ),
+        ("X-Stainless-Arch".to_string(), "x64".to_string()),
+        ("X-Stainless-Lang".to_string(), "js".to_string()),
+        ("X-Stainless-OS".to_string(), "Linux".to_string()),
+        (
+            "X-Stainless-Package-Version".to_string(),
+            "0.93.0".to_string(),
+        ),
+        ("X-Stainless-Retry-Count".to_string(), "0".to_string()),
+        ("X-Stainless-Runtime".to_string(), "node".to_string()),
+        (
+            "X-Stainless-Runtime-Version".to_string(),
+            "v24.3.0".to_string(),
+        ),
+        ("X-Stainless-Timeout".to_string(), "600".to_string()),
+    ]
+}
 
 /// Claude Code 2.x canonical tool names; the OAuth path expects this casing.
 const CLAUDE_CODE_TOOLS: [&str; 17] = [
@@ -758,26 +826,19 @@ impl Provider for AnthropicProvider {
 
         // Default headers first; entry and per-request headers override them
         // (case-insensitively), so callers can replace e.g. anthropic-beta.
-        let mut headers: Vec<(String, String)> = vec![
-            ("anthropic-version".to_string(), ANTHROPIC_VERSION.to_string()),
-            ("accept".to_string(), "text/event-stream".to_string()),
-        ];
+        let mut headers: Vec<(String, String)> =
+            vec![("accept".to_string(), "text/event-stream".to_string())];
         if oauth {
-            headers.push((
-                "anthropic-beta".to_string(),
-                if context.tools.is_empty() {
-                    OAUTH_BETAS.to_string()
-                } else {
-                    format!("{OAUTH_BETAS},{FINE_GRAINED_TOOL_STREAMING_BETA}")
-                },
-            ));
-            headers.push((
-                "user-agent".to_string(),
-                format!("claude-cli/{CLAUDE_CLI_VERSION}"),
-            ));
-            headers.push(("x-app".to_string(), "cli".to_string()));
+            // The full Claude Code identity set (betas, user-agent, the
+            // X-Stainless family, fresh per-request UUIDs) — the subscription
+            // path is gated on looking like the real client.
+            headers.extend(claude_code_headers());
             headers.push(("Authorization".to_string(), format!("Bearer {token}")));
         } else {
+            headers.push((
+                "anthropic-version".to_string(),
+                ANTHROPIC_VERSION.to_string(),
+            ));
             if !context.tools.is_empty() {
                 headers.push((
                     "anthropic-beta".to_string(),

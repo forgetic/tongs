@@ -406,3 +406,60 @@ fn detects_oauth_tokens() {
     assert!(is_oauth_token("sk-ant-oat01-xyz"));
     assert!(!is_oauth_token("sk-ant-api03-xyz"));
 }
+
+#[test]
+fn claude_code_headers_match_identity_without_tokens() {
+    let headers: HashMap<String, String> = claude_code_headers().into_iter().collect();
+    assert_eq!(
+        headers.get("anthropic-version").map(String::as_str),
+        Some("2023-06-01")
+    );
+    assert_eq!(headers.get("x-app").map(String::as_str), Some("cli"));
+    assert_eq!(
+        headers.get("user-agent").map(String::as_str),
+        Some("claude-cli/2.1.139 (external, sdk-cli)")
+    );
+    assert_eq!(
+        headers.get("X-Stainless-Runtime").map(String::as_str),
+        Some("node")
+    );
+    let beta = headers.get("anthropic-beta").expect("beta header");
+    for flag in [
+        "claude-code-20250219",
+        "oauth-2025-04-20",
+        "context-1m-2025-08-07",
+        "effort-2025-11-24",
+    ] {
+        assert!(beta.contains(flag), "missing beta flag {flag}");
+    }
+    assert!(uuid::Uuid::parse_str(headers.get("x-client-request-id").unwrap()).is_ok());
+    assert!(uuid::Uuid::parse_str(headers.get("X-Claude-Code-Session-Id").unwrap()).is_ok());
+    // No token material leaks into the identity headers.
+    let rendered = format!("{headers:?}");
+    assert!(!rendered.contains("sk-ant"));
+    assert!(!rendered.contains("refresh"));
+}
+
+#[test]
+fn claude_code_headers_use_fresh_ids() {
+    let first: HashMap<String, String> = claude_code_headers().into_iter().collect();
+    let second: HashMap<String, String> = claude_code_headers().into_iter().collect();
+    assert_ne!(
+        first.get("x-client-request-id"),
+        second.get("x-client-request-id")
+    );
+    assert_ne!(
+        first.get("X-Claude-Code-Session-Id"),
+        second.get("X-Claude-Code-Session-Id")
+    );
+}
+
+#[test]
+fn system_identity_is_the_exact_required_line() {
+    // The literal the subscription path requires as the first system block; a
+    // drift here is a generic 429 at request time, so pin it.
+    assert_eq!(
+        CLAUDE_CODE_SYSTEM_IDENTITY,
+        "You are Claude Code, Anthropic's official CLI for Claude."
+    );
+}

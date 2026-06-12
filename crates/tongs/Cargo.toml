@@ -1,0 +1,15 @@
+[package]
+name = "tongs"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+description = "Sans-IO agent SDK on skein: model types, streaming LLM providers, OAuth, coding tools. Clean-room port of the MIT TypeScript Pi semantics."
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+skein.workspace = true
+
+[lints]
+workspace = true

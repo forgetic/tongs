@@ -1,0 +1,35 @@
+[workspace]
+members = ["crates/tongs"]
+resolver = "2"
+
+[workspace.package]
+edition = "2024"
+license = "MIT"
+# skein's let-chain usage sets the floor at 1.88, same as smith/temper/anvil.
+rust-version = "1.88"
+version = "0.1.0"
+
+[workspace.dependencies]
+skein = { path = "../skein/crates/skein", features = ["tls", "tls-native-roots"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[profile.dev]
+opt-level = 0
+debug = 0
+incremental = true
+codegen-units = 256
+lto = false
+
+[profile.dev.package."*"]
+debug = 0
+
+[profile.test]
+opt-level = 0
+debug = 0
+incremental = true
+codegen-units = 256
+lto = false

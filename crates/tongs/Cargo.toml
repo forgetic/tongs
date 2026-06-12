@@ -9,6 +9,9 @@ description = "Sans-IO agent SDK on skein: model types, streaming LLM providers,
 [dependencies]
 async-trait.workspace = true
 futures-core.workspace = true
+globset.workspace = true
+ignore.workspace = true
+regex.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 skein.workspace = true

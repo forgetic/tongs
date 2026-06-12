@@ -25,6 +25,34 @@ pub(crate) fn base64url_decode(input: &str) -> Option<Vec<u8>> {
     Some(out)
 }
 
+/// Encodes standard base64 (RFC 4648 §4, padded). Used for image payloads.
+pub(crate) fn base64_encode(input: &[u8]) -> String {
+    const ALPHABET: &[u8; 64] =
+        b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    let mut out = String::with_capacity(input.len().div_ceil(3) * 4);
+    for chunk in input.chunks(3) {
+        let b = [
+            chunk[0],
+            chunk.get(1).copied().unwrap_or(0),
+            chunk.get(2).copied().unwrap_or(0),
+        ];
+        let n = (u32::from(b[0]) << 16) | (u32::from(b[1]) << 8) | u32::from(b[2]);
+        out.push(ALPHABET[(n >> 18) as usize & 63] as char);
+        out.push(ALPHABET[(n >> 12) as usize & 63] as char);
+        out.push(if chunk.len() > 1 {
+            ALPHABET[(n >> 6) as usize & 63] as char
+        } else {
+            '='
+        });
+        out.push(if chunk.len() > 2 {
+            ALPHABET[n as usize & 63] as char
+        } else {
+            '='
+        });
+    }
+    out
+}
+
 /// A short stable hash for synthesizing ids (FNV-1a, hex).
 pub(crate) fn short_hash(input: &str) -> String {
     let mut hash: u64 = 0xcbf2_9ce4_8422_2325;
@@ -54,6 +82,16 @@ mod tests {
         // base64url alphabet: '-' and '_'
         assert_eq!(base64url_decode("_-8").unwrap(), vec![0xff, 0xef]);
         assert!(base64url_decode("bad!").is_none());
+    }
+
+    #[test]
+    fn encodes_base64() {
+        assert_eq!(base64_encode(b"hello"), "aGVsbG8=");
+        assert_eq!(base64_encode(b"hi"), "aGk=");
+        assert_eq!(
+            base64url_decode(&base64_encode(&[0xff, 0xef, 0x01])).unwrap(),
+            vec![0xff, 0xef, 0x01]
+        );
     }
 
     #[test]

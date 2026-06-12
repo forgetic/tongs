@@ -14,6 +14,7 @@ pub mod provider;
 pub mod providers;
 pub mod runtime;
 pub mod sse;
+pub mod tools;
 mod util;
 
 pub use error::{Error, Result};

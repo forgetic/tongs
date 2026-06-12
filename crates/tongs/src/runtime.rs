@@ -81,6 +81,16 @@ where
     }
 }
 
+/// The current time on the clock that fires timers: the ambient timer-driver
+/// clock inside a task, the process wall clock otherwise (the same base
+/// driverless sleeps are checked against).
+pub fn engine_now() -> skein::types::Time {
+    skein::cx::Cx::current().map_or_else(skein::time::wall_now, |cx| {
+        cx.timer_driver()
+            .map_or_else(skein::time::wall_now, |driver| driver.now())
+    })
+}
+
 /// A minimal runtime-agnostic oneshot (plain mutex + waker), so the result
 /// can be awaited from the raw `Runtime::block_on` context which has no `Cx`.
 fn result_slot<T>() -> (SlotSender<T>, SlotReceiver<T>) {

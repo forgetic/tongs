@@ -388,7 +388,11 @@ fn resolves_codex_urls() {
     );
     assert_eq!(
         resolve_codex_url("https://example.com/base/"),
-        "https://example.com/base/codex/responses"
+        "https://example.com/base/backend-api/codex/responses"
+    );
+    assert_eq!(
+        resolve_codex_url("http://127.0.0.1:9000"),
+        "http://127.0.0.1:9000/backend-api/codex/responses"
     );
     assert_eq!(
         resolve_codex_url("https://example.com/codex"),

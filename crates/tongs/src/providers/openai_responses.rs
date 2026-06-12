@@ -952,7 +952,9 @@ impl Provider for CodexProvider {
     }
 }
 
-/// Normalizes a base URL to the canonical `…/codex/responses` endpoint.
+/// Normalizes a base URL to the canonical `…/backend-api/codex/responses`
+/// endpoint. A bare host (e.g. a test fake) gets the full backend path, so
+/// overriding the base URL keeps the production request path.
 pub(crate) fn resolve_codex_url(base_url: &str) -> String {
     let raw = if base_url.trim().is_empty() {
         DEFAULT_CODEX_BASE_URL
@@ -964,8 +966,10 @@ pub(crate) fn resolve_codex_url(base_url: &str) -> String {
         normalized.to_string()
     } else if normalized.ends_with("/codex") {
         format!("{normalized}/responses")
-    } else {
+    } else if normalized.ends_with("/backend-api") {
         format!("{normalized}/codex/responses")
+    } else {
+        format!("{normalized}/backend-api/codex/responses")
     }
 }
 

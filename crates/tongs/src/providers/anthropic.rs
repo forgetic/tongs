@@ -206,7 +206,7 @@ pub(crate) fn convert_anthropic_messages(
     // Consecutive tool results merge into one user turn.
     let mut pending_tool_results: Vec<Value> = Vec::new();
 
-    let mut flush_tool_results = |messages: &mut Vec<Value>, pending: &mut Vec<Value>| {
+    let flush_tool_results = |messages: &mut Vec<Value>, pending: &mut Vec<Value>| {
         if !pending.is_empty() {
             messages.push(json!({ "role": "user", "content": std::mem::take(pending) }));
         }

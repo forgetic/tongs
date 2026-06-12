@@ -27,6 +27,13 @@ pub enum Error {
 
 pub type Result<T> = std::result::Result<T, Error>;
 
+impl Error {
+    /// A tool-execution failure attributed to `name`.
+    pub fn tool(name: impl Into<String>, message: impl std::fmt::Display) -> Self {
+        Error::Tool(format!("{}: {message}", name.into()))
+    }
+}
+
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {

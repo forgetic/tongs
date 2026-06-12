@@ -4,6 +4,7 @@
 //! body and folds SSE events into unified [`crate::model::StreamEvent`]s; the
 //! shared wire driver ([`wire`]) does the HTTP/SSE transport on skein.
 
+pub mod anthropic;
 pub mod openai_completions;
 pub mod openai_responses;
 pub(crate) mod wire;
@@ -14,6 +15,7 @@ use crate::http::Client;
 use crate::provider::{ModelEntry, Provider};
 use crate::{Error, Result};
 
+pub use anthropic::AnthropicProvider;
 pub use openai_completions::CompletionsProvider;
 pub use openai_responses::CodexProvider;
 
@@ -30,9 +32,10 @@ pub fn create_provider(entry: &ModelEntry, client: Option<Client>) -> Result<Arc
     match entry.model.api.as_str() {
         "openai-codex-responses" => Ok(Arc::new(CodexProvider::new(entry.clone(), client))),
         "openai-completions" => Ok(Arc::new(CompletionsProvider::new(entry.clone(), client))),
+        "anthropic-messages" => Ok(Arc::new(AnthropicProvider::new(entry.clone(), client))),
         other => Err(Error::Other(format!(
             "unsupported provider api `{other}` (tongs supports: \
-             openai-codex-responses, openai-completions)"
+             openai-codex-responses, openai-completions, anthropic-messages)"
         ))),
     }
 }

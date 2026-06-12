@@ -7,6 +7,8 @@ rust-version.workspace = true
 description = "Sans-IO agent SDK on skein: model types, streaming LLM providers, OAuth, coding tools. Clean-room port of the MIT TypeScript Pi semantics."
 
 [dependencies]
+async-trait.workspace = true
+futures-core.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 skein.workspace = true

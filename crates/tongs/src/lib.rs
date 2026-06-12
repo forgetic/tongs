@@ -6,5 +6,10 @@
 //! lives in thin shells on skein.
 
 pub mod error;
+pub mod http;
+pub mod model;
+pub mod provider;
+pub mod providers;
+pub mod sse;
 
 pub use error::{Error, Result};

@@ -192,6 +192,11 @@ pub(crate) fn build_anthropic_request(
         system.push(json!({ "type": "text", "text": prompt }));
     }
     if !system.is_empty() {
+        // Prompt caching: a breakpoint on the last system block caches the
+        // whole static prefix (tools + system) across turns.
+        if let Some(last) = system.last_mut().and_then(Value::as_object_mut) {
+            last.insert("cache_control".to_string(), ephemeral_cache_control());
+        }
         object.insert("system".to_string(), Value::Array(system));
     }
 
@@ -398,7 +403,52 @@ pub(crate) fn convert_anthropic_messages(
         }
     }
     flush_tool_results(&mut messages, &mut pending_tool_results);
+    add_message_cache_breakpoints(&mut messages);
     messages
+}
+
+/// The `cache_control` marker value for prompt-caching breakpoints.
+fn ephemeral_cache_control() -> Value {
+    json!({ "type": "ephemeral" })
+}
+
+/// Marks the last two user-role turns (plain user messages and merged
+/// tool-result turns) with `cache_control` breakpoints.
+///
+/// This is the sliding-window scheme Claude Code uses: each turn's request
+/// re-marks the conversation tail, so the previous turn's cache entry is read
+/// (everything up to the old marker) and the new tail is written. Two markers
+/// rather than one keeps a hit available even when the latest write has not
+/// landed yet. Together with the system-block marker this stays within
+/// Anthropic's four-breakpoint limit.
+fn add_message_cache_breakpoints(messages: &mut [Value]) {
+    let user_turns: Vec<usize> = messages
+        .iter()
+        .enumerate()
+        .filter(|(_, message)| message.get("role").and_then(Value::as_str) == Some("user"))
+        .map(|(index, _)| index)
+        .collect();
+    for &index in user_turns.iter().rev().take(2) {
+        mark_last_content_block(&mut messages[index]);
+    }
+}
+
+/// Attaches `cache_control` to the last content block of one message,
+/// converting a string-shorthand `content` into block form when needed.
+fn mark_last_content_block(message: &mut Value) {
+    let Some(content) = message.get_mut("content") else {
+        return;
+    };
+    if let Some(text) = content.as_str() {
+        *content = json!([{ "type": "text", "text": text }]);
+    }
+    if let Some(last) = content
+        .as_array_mut()
+        .and_then(|blocks| blocks.last_mut())
+        .and_then(Value::as_object_mut)
+    {
+        last.insert("cache_control".to_string(), ephemeral_cache_control());
+    }
 }
 
 /// Normalizes a base URL to the `…/v1/messages` endpoint.

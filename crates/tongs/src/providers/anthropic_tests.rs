@@ -460,3 +460,59 @@ fn system_identity_is_the_exact_required_line() {
         "You are Claude Code, Anthropic's official CLI for Claude."
     );
 }
+
+#[test]
+fn cache_breakpoints_mark_system_and_last_two_user_turns() {
+    let model = claude_model();
+    let ephemeral = json!({ "type": "ephemeral" });
+    let context = Context {
+        system_prompt: Some(Cow::Borrowed("be terse")),
+        messages: Cow::Owned(vec![
+            Message::User(UserMessage {
+                content: UserContent::Text("first".to_string()),
+                timestamp: 0,
+            }),
+            Message::Assistant(Arc::new(AssistantMessage {
+                content: vec![ContentBlock::ToolCall(ToolCall {
+                    id: "toolu_1".to_string(),
+                    name: "read".to_string(),
+                    arguments: json!({"path": "a"}),
+                })],
+                api: "anthropic-messages".to_string(),
+                provider: "anthropic".to_string(),
+                model: "claude-opus-4-8".to_string(),
+                usage: Usage::default(),
+                stop_reason: StopReason::ToolUse,
+                error_message: None,
+                timestamp: 0,
+            })),
+            Message::ToolResult(Arc::new(ToolResultMessage {
+                tool_call_id: "toolu_1".to_string(),
+                tool_name: "read".to_string(),
+                content: vec![ContentBlock::Text(TextContent {
+                    text: "alpha".to_string(),
+                    text_signature: None,
+                })],
+                details: None,
+                is_error: false,
+                timestamp: 0,
+            })),
+        ]),
+        tools: Cow::Owned(vec![]),
+    };
+    let body = build_anthropic_request(&model, &context, &StreamOptions::default(), false);
+
+    // The static prefix: one marker on the last system block.
+    assert_eq!(body["system"][0]["cache_control"], ephemeral);
+
+    let messages = body["messages"].as_array().expect("messages array");
+    assert_eq!(messages.len(), 3);
+    // Both user-role turns (the string-shorthand user message converts to
+    // block form, and the merged tool-result turn) carry the sliding markers.
+    assert_eq!(messages[0]["role"], "user");
+    assert_eq!(messages[0]["content"][0]["cache_control"], ephemeral);
+    // The assistant turn stays unmarked.
+    assert!(messages[1]["content"][0].get("cache_control").is_none());
+    assert_eq!(messages[2]["role"], "user");
+    assert_eq!(messages[2]["content"][0]["cache_control"], ephemeral);
+}

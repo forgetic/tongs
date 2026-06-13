@@ -1,0 +1,129 @@
+{
+  "status": 200,
+  "headers": [
+    {
+      "name": "Date",
+      "value": "Sat, 13 Jun 2026 00:40:34 GMT"
+    },
+    {
+      "name": "Content-Type",
+      "value": "text/event-stream; charset=utf-8"
+    },
+    {
+      "name": "Transfer-Encoding",
+      "value": "chunked"
+    },
+    {
+      "name": "Connection",
+      "value": "close"
+    },
+    {
+      "name": "Cache-Control",
+      "value": "no-cache"
+    },
+    {
+      "name": "anthropic-ratelimit-unified-status",
+      "value": "allowed"
+    },
+    {
+      "name": "anthropic-ratelimit-unified-5h-status",
+      "value": "allowed"
+    },
+    {
+      "name": "anthropic-ratelimit-unified-5h-reset",
+      "value": "1781329200"
+    },
+    {
+      "name": "anthropic-ratelimit-unified-5h-utilization",
+      "value": "0.0"
+    },
+    {
+      "name": "anthropic-ratelimit-unified-7d-status",
+      "value": "allowed"
+    },
+    {
+      "name": "anthropic-ratelimit-unified-7d-reset",
+      "value": "1781845200"
+    },
+    {
+      "name": "anthropic-ratelimit-unified-7d-utilization",
+      "value": "0.28"
+    },
+    {
+      "name": "anthropic-ratelimit-unified-7d_sonnet-status",
+      "value": "allowed"
+    },
+    {
+      "name": "anthropic-ratelimit-unified-7d_sonnet-reset",
+      "value": "1781845200"
+    },
+    {
+      "name": "anthropic-ratelimit-unified-7d_sonnet-utilization",
+      "value": "0.0"
+    },
+    {
+      "name": "anthropic-ratelimit-unified-representative-claim",
+      "value": "five_hour"
+    },
+    {
+      "name": "anthropic-ratelimit-unified-fallback-percentage",
+      "value": "0.5"
+    },
+    {
+      "name": "anthropic-ratelimit-unified-reset",
+      "value": "1781329200"
+    },
+    {
+      "name": "anthropic-ratelimit-unified-overage-disabled-reason",
+      "value": "org_level_disabled"
+    },
+    {
+      "name": "anthropic-ratelimit-unified-overage-status",
+      "value": "rejected"
+    },
+    {
+      "name": "request-id",
+      "value": "req_011CbzKzmBTmNQMyLHp4yEPp"
+    },
+    {
+      "name": "strict-transport-security",
+      "value": "max-age=31536000; includeSubDomains; preload"
+    },
+    {
+      "name": "anthropic-organization-id",
+      "value": "ba3bbd42-dcf5-4bc7-b856-83edb6cd9c46"
+    },
+    {
+      "name": "traceresponse",
+      "value": "00-360dc4d6a51f8861583129211591d2cd-2e9f4335ed10bf97-01"
+    },
+    {
+      "name": "Server",
+      "value": "cloudflare"
+    },
+    {
+      "name": "X-Robots-Tag",
+      "value": "none"
+    },
+    {
+      "name": "vary",
+      "value": "Accept-Encoding"
+    },
+    {
+      "name": "cf-cache-status",
+      "value": "DYNAMIC"
+    },
+    {
+      "name": "set-cookie",
+      "value": "REDACTED"
+    },
+    {
+      "name": "Content-Security-Policy",
+      "value": "default-src 'none'; frame-ancestors 'none'"
+    },
+    {
+      "name": "CF-RAY",
+      "value": "a0ad0b666de326a9-MAD"
+    }
+  ]
+}

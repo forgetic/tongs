@@ -492,6 +492,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "jig-record"
+version = "0.1.0"
+dependencies = [
+ "jig-core",
+ "jig-runtime",
+ "serde",
+ "serde_json",
+ "skein",
+]
+
+[[package]]
 name = "jig-runtime"
 version = "0.1.0"
 dependencies = [
@@ -1091,6 +1102,7 @@ dependencies = [
  "tracing",
  "tracing-subscriber",
  "visibility",
+ "webpki-roots",
  "x509-parser",
 ]
 
@@ -1225,6 +1237,7 @@ dependencies = [
  "globset",
  "ignore",
  "jig-core",
+ "jig-record",
  "jig-server",
  "regex",
  "serde",
@@ -1471,6 +1484,15 @@ dependencies = [
  "hashbrown 0.15.5",
  "indexmap",
  "semver",
+]
+
+[[package]]
+name = "webpki-roots"
+version = "1.0.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "52f5ee44c96cf55f1b349600768e3ece3a8f26010c05265ab73f945bb1a2eb9d"
+dependencies = [
+ "rustls-pki-types",
 ]
 
 [[package]]

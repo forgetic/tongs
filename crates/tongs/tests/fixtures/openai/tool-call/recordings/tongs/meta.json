@@ -1,0 +1,10 @@
+{
+  "client": "tongs",
+  "role": "subject",
+  "dialect": "openai",
+  "scenario": "tool-call",
+  "client_version": "tongs 0.1.0",
+  "model": "deepseek-v4-flash",
+  "captured": "2026-06-13",
+  "recorder_sha": "f4e0a2b"
+}

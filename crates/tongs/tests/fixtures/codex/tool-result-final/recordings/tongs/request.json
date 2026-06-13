@@ -1,0 +1,47 @@
+{
+  "method": "POST",
+  "path": "/backend-api/codex/responses",
+  "headers": [
+    {
+      "name": "Host",
+      "value": "127.0.0.1:37533"
+    },
+    {
+      "name": "User-Agent",
+      "value": "tongs/0.1"
+    },
+    {
+      "name": "Content-Type",
+      "value": "application/json"
+    },
+    {
+      "name": "Authorization",
+      "value": "REDACTED"
+    },
+    {
+      "name": "chatgpt-account-id",
+      "value": "REDACTED"
+    },
+    {
+      "name": "originator",
+      "value": "pi"
+    },
+    {
+      "name": "User-Agent",
+      "value": "pi (linux; x86_64)"
+    },
+    {
+      "name": "OpenAI-Beta",
+      "value": "responses=experimental"
+    },
+    {
+      "name": "accept",
+      "value": "text/event-stream"
+    },
+    {
+      "name": "Content-Length",
+      "value": "865"
+    }
+  ],
+  "body": "{\"include\":[\"reasoning.encrypted_content\"],\"input\":[{\"content\":[{\"text\":\"What is the weather in Paris?\",\"type\":\"input_text\"}],\"role\":\"user\"},{\"arguments\":\"{\\\"city\\\":\\\"Paris\\\"}\",\"call_id\":\"call_jig_subject_1\",\"id\":null,\"name\":\"get_weather\",\"type\":\"function_call\"},{\"call_id\":\"call_jig_subject_1\",\"output\":\"sunny, 24C\",\"type\":\"function_call_output\"},{\"content\":[{\"text\":\"Now tell me the weather in one short sentence.\",\"type\":\"input_text\"}],\"role\":\"user\"}],\"instructions\":\"You are a terse test assistant. Follow the instruction exactly.\",\"model\":\"gpt-5.5\",\"parallel_tool_calls\":true,\"store\":false,\"stream\":true,\"text\":{\"verbosity\":\"low\"},\"tool_choice\":\"auto\",\"tools\":[{\"description\":\"Get the current weather for a city\",\"name\":\"get_weather\",\"parameters\":{\"properties\":{\"city\":{\"type\":\"string\"}},\"required\":[\"city\"],\"type\":\"object\"},\"strict\":false,\"type\":\"function\"}]}"
+}

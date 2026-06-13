@@ -12,6 +12,7 @@ version = "0.1.0"
 [workspace.dependencies]
 skein = { path = "../skein/crates/skein", features = ["tls", "tls-native-roots"] }
 jig-core = { path = "../jig/crates/jig-core" }
+jig-record = { path = "../jig/crates/jig-record" }
 jig-server = { path = "../jig/crates/jig-server" }
 serde = { version = "1", features = ["derive", "rc"] }
 serde_json = "1"

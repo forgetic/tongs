@@ -1,0 +1,31 @@
+{
+  "method": "POST",
+  "path": "/chat/completions",
+  "headers": [
+    {
+      "name": "Host",
+      "value": "127.0.0.1:37337"
+    },
+    {
+      "name": "User-Agent",
+      "value": "tongs/0.1"
+    },
+    {
+      "name": "Content-Type",
+      "value": "application/json"
+    },
+    {
+      "name": "Authorization",
+      "value": "REDACTED"
+    },
+    {
+      "name": "accept",
+      "value": "text/event-stream"
+    },
+    {
+      "name": "Content-Length",
+      "value": "773"
+    }
+  ],
+  "body": "{\"max_tokens\":8192,\"messages\":[{\"content\":\"You are a terse test assistant. Follow the instruction exactly.\",\"role\":\"system\"},{\"content\":\"What is the weather in Paris?\",\"role\":\"user\"},{\"role\":\"assistant\",\"tool_calls\":[{\"function\":{\"arguments\":\"{\\\"city\\\":\\\"Paris\\\"}\",\"name\":\"get_weather\"},\"id\":\"call_jig_subject_1\",\"type\":\"function\"}]},{\"content\":\"sunny, 24C\",\"role\":\"tool\",\"tool_call_id\":\"call_jig_subject_1\"},{\"content\":\"Now tell me the weather in one short sentence.\",\"role\":\"user\"}],\"model\":\"deepseek-v4-flash\",\"stream\":true,\"stream_options\":{\"include_usage\":true},\"tools\":[{\"function\":{\"description\":\"Get the current weather for a city\",\"name\":\"get_weather\",\"parameters\":{\"properties\":{\"city\":{\"type\":\"string\"}},\"required\":[\"city\"],\"type\":\"object\"}},\"type\":\"function\"}]}"
+}

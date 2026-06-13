@@ -1,0 +1,10 @@
+{
+  "client": "tongs",
+  "role": "subject",
+  "dialect": "anthropic",
+  "scenario": "tool-result-final",
+  "client_version": "tongs 0.1.0",
+  "model": "claude-sonnet-4-5",
+  "captured": "2026-06-13",
+  "recorder_sha": "f4e0a2b"
+}

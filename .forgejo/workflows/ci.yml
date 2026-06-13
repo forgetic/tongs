@@ -1,0 +1,50 @@
+name: ci
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+# Builds are cached transparently by the kache daemon (rustc-wrapper in
+# ~/.cargo/config.toml on the host runner), so a clean checkout still gets
+# warm builds for everything except final binaries.
+#
+# tongs depends on skein and jig by sibling path (`../skein/...`, `../jig/...`),
+# the same layout every local checkout of this ecosystem uses. CI reproduces it
+# by checking tongs out into a `tongs/` subdirectory of the workspace with the
+# siblings next to it, so the relative paths resolve identically. The jig
+# checkout also provides the authoritative `fixtures/` templates the offline
+# subject-conformance suite validates the committed tongs recordings against.
+jobs:
+  validate:
+    runs-on: host
+    defaults:
+      run:
+        working-directory: tongs
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: tongs
+      # A second actions/checkout cannot fetch ai/skein or ai/jig: the job
+      # token is scoped to ai/tongs, so the action's repo lookup 404s. The
+      # repos are public, so plain anonymous clones do the job.
+      - name: Checkout skein and jig (sibling path dependencies)
+        working-directory: .
+        run: |
+          rm -rf skein jig
+          git clone --depth 1 ${{ github.server_url }}/ai/skein.git skein
+          git clone --depth 1 ${{ github.server_url }}/ai/jig.git jig
+      - name: Format
+        # Not `--all`: cargo-fmt's --all also formats local path-based
+        # dependencies (the sibling checkouts next door), which tongs' CI must
+        # not police. List the workspace members explicitly instead.
+        run: cargo fmt -p tongs -- --check
+      - name: Lint
+        run: cargo clippy --workspace --all-targets -- -D warnings
+      - name: Test
+        run: cargo test --workspace

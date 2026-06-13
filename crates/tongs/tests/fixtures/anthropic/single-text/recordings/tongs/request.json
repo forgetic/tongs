@@ -1,0 +1,87 @@
+{
+  "method": "POST",
+  "path": "/v1/messages",
+  "headers": [
+    {
+      "name": "Host",
+      "value": "127.0.0.1:44199"
+    },
+    {
+      "name": "User-Agent",
+      "value": "tongs/0.1"
+    },
+    {
+      "name": "Content-Type",
+      "value": "application/json"
+    },
+    {
+      "name": "accept",
+      "value": "text/event-stream"
+    },
+    {
+      "name": "x-client-request-id",
+      "value": "REDACTED"
+    },
+    {
+      "name": "anthropic-beta",
+      "value": "claude-code-20250219,oauth-2025-04-20,interleaved-thinking-2025-05-14,context-management-2025-06-27,prompt-caching-scope-2026-01-05,advisor-tool-2026-03-01,advanced-tool-use-2025-11-20,context-1m-2025-08-07,effort-2025-11-24,extended-cache-ttl-2025-04-11"
+    },
+    {
+      "name": "anthropic-version",
+      "value": "2023-06-01"
+    },
+    {
+      "name": "user-agent",
+      "value": "claude-cli/2.1.139 (external, sdk-cli)"
+    },
+    {
+      "name": "x-app",
+      "value": "cli"
+    },
+    {
+      "name": "X-Claude-Code-Session-Id",
+      "value": "REDACTED"
+    },
+    {
+      "name": "X-Stainless-Arch",
+      "value": "x64"
+    },
+    {
+      "name": "X-Stainless-Lang",
+      "value": "js"
+    },
+    {
+      "name": "X-Stainless-OS",
+      "value": "Linux"
+    },
+    {
+      "name": "X-Stainless-Package-Version",
+      "value": "0.93.0"
+    },
+    {
+      "name": "X-Stainless-Retry-Count",
+      "value": "0"
+    },
+    {
+      "name": "X-Stainless-Runtime",
+      "value": "node"
+    },
+    {
+      "name": "X-Stainless-Runtime-Version",
+      "value": "v24.3.0"
+    },
+    {
+      "name": "X-Stainless-Timeout",
+      "value": "600"
+    },
+    {
+      "name": "Authorization",
+      "value": "REDACTED"
+    },
+    {
+      "name": "Content-Length",
+      "value": "311"
+    }
+  ],
+  "body": "{\"max_tokens\":8192,\"messages\":[{\"content\":\"Reply with exactly: hello\",\"role\":\"user\"}],\"model\":\"claude-sonnet-4-5\",\"stream\":true,\"system\":[{\"text\":\"You are Claude Code, Anthropic's official CLI for Claude.\",\"type\":\"text\"},{\"text\":\"You are a terse test assistant. Follow the instruction exactly.\",\"type\":\"text\"}]}"
+}

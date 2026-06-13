@@ -19,6 +19,7 @@ uuid.workspace = true
 
 [dev-dependencies]
 jig-core.workspace = true
+jig-record.workspace = true
 jig-server.workspace = true
 
 [lints]

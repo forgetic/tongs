@@ -1,0 +1,47 @@
+{
+  "method": "POST",
+  "path": "/backend-api/codex/responses",
+  "headers": [
+    {
+      "name": "Host",
+      "value": "127.0.0.1:40133"
+    },
+    {
+      "name": "User-Agent",
+      "value": "tongs/0.1"
+    },
+    {
+      "name": "Content-Type",
+      "value": "application/json"
+    },
+    {
+      "name": "Authorization",
+      "value": "REDACTED"
+    },
+    {
+      "name": "chatgpt-account-id",
+      "value": "REDACTED"
+    },
+    {
+      "name": "originator",
+      "value": "pi"
+    },
+    {
+      "name": "User-Agent",
+      "value": "pi (linux; x86_64)"
+    },
+    {
+      "name": "OpenAI-Beta",
+      "value": "responses=experimental"
+    },
+    {
+      "name": "accept",
+      "value": "text/event-stream"
+    },
+    {
+      "name": "Content-Length",
+      "value": "592"
+    }
+  ],
+  "body": "{\"include\":[\"reasoning.encrypted_content\"],\"input\":[{\"content\":[{\"text\":\"Call the get_weather tool for the city Paris. Do not reply with text.\",\"type\":\"input_text\"}],\"role\":\"user\"}],\"instructions\":\"You are a terse test assistant. Follow the instruction exactly.\",\"model\":\"gpt-5.5\",\"parallel_tool_calls\":true,\"store\":false,\"stream\":true,\"text\":{\"verbosity\":\"low\"},\"tool_choice\":\"auto\",\"tools\":[{\"description\":\"Get the current weather for a city\",\"name\":\"get_weather\",\"parameters\":{\"properties\":{\"city\":{\"type\":\"string\"}},\"required\":[\"city\"],\"type\":\"object\"},\"strict\":false,\"type\":\"function\"}]}"
+}

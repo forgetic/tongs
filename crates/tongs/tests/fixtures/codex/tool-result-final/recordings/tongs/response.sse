@@ -1,0 +1,76 @@
+b5a
+event: response.created
+data: {"type":"response.created","response":{"id":"resp_013e402bc35e0c3a016a2ca864cb188191b773ac78c250184d","object":"response","created_at":1781311588,"status":"in_progress","background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"incomplete_details":null,"instructions":"You are a terse test assistant. Follow the instruction exactly.","max_output_tokens":null,"max_tool_calls":null,"model":"gpt-5.5","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":"0b64f5fa-04db-4136-92f4-890158de900c","prompt_cache_retention":"24h","reasoning":{"context":"current_turn","effort":"medium","summary":null},"safety_identifier":"user-1pmLfR01FlqQRFhW5OSz0u7I","service_tier":"auto","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"low"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Get the current weather for a city","name":"get_weather","parameters":{"properties":{"city":{"type":"string"}},"required":["city"],"type":"object"},"strict":false}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{}},"sequence_number":0}
+
+event: response.in_progress
+data: {"type":"response.in_progress","response":{"id":"resp_013e402bc35e0c3a016a2ca864cb188191b773ac78c250184d","object":"response","created_at":1781311588,"status":"in_progress","background":false,"completed_at":null,"error":null,"frequency_penalty":0.0,"incomplete_details":null,"instructions":"You are a terse test assistant. Follow the instruction exactly.","max_output_tokens":null,"max_tool_calls":null,"model":"gpt-5.5","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":"0b64f5fa-04db-4136-92f4-890158de900c","prompt_cache_retention":"24h","reasoning":{"context":"current_turn","effort":"medium","summary":null},"safety_identifier":"user-1pmLfR01FlqQRFhW5OSz0u7I","service_tier":"auto","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"low"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Get the current weather for a city","name":"get_weather","parameters":{"properties":{"city":{"type":"string"}},"required":["city"],"type":"object"},"strict":false}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":null,"user":null,"metadata":{}},"sequence_number":1}
+
+
+22c
+event: response.output_item.added
+data: {"type":"response.output_item.added","item":{"id":"msg_013e402bc35e0c3a016a2ca8655f048191a36201f1c85b5aed","type":"message","status":"in_progress","content":[],"phase":"final_answer","role":"assistant"},"output_index":0,"sequence_number":2}
+
+event: response.content_part.added
+data: {"type":"response.content_part.added","content_index":0,"item_id":"msg_013e402bc35e0c3a016a2ca8655f048191a36201f1c85b5aed","output_index":0,"part":{"type":"output_text","annotations":[],"logprobs":[],"text":""},"sequence_number":3}
+
+
+103
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":"Paris","item_id":"msg_013e402bc35e0c3a016a2ca8655f048191a36201f1c85b5aed","logprobs":[],"obfuscation":"B9ot6AbfLq6","output_index":0,"sequence_number":4}
+
+
+103
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" is","item_id":"msg_013e402bc35e0c3a016a2ca8655f048191a36201f1c85b5aed","logprobs":[],"obfuscation":"Xoug8qa9pV1dh","output_index":0,"sequence_number":5}
+
+
+103
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" sunny","item_id":"msg_013e402bc35e0c3a016a2ca8655f048191a36201f1c85b5aed","logprobs":[],"obfuscation":"YCuqCWkQn7","output_index":0,"sequence_number":6}
+
+
+206
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" and","item_id":"msg_013e402bc35e0c3a016a2ca8655f048191a36201f1c85b5aed","logprobs":[],"obfuscation":"n9MUcRMvhdfY","output_index":0,"sequence_number":7}
+
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":" ","item_id":"msg_013e402bc35e0c3a016a2ca8655f048191a36201f1c85b5aed","logprobs":[],"obfuscation":"6uKqmh3xK4VCmcA","output_index":0,"sequence_number":8}
+
+
+103
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":"24","item_id":"msg_013e402bc35e0c3a016a2ca8655f048191a36201f1c85b5aed","logprobs":[],"obfuscation":"GpM9nb2zMDGOye","output_index":0,"sequence_number":9}
+
+
+105
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":"°C","item_id":"msg_013e402bc35e0c3a016a2ca8655f048191a36201f1c85b5aed","logprobs":[],"obfuscation":"uYSWiNRTmXBtQj","output_index":0,"sequence_number":10}
+
+
+104
+event: response.output_text.delta
+data: {"type":"response.output_text.delta","content_index":0,"delta":".","item_id":"msg_013e402bc35e0c3a016a2ca8655f048191a36201f1c85b5aed","logprobs":[],"obfuscation":"qgthdZIR5Pnjof2","output_index":0,"sequence_number":11}
+
+
+f9
+event: response.output_text.done
+data: {"type":"response.output_text.done","content_index":0,"item_id":"msg_013e402bc35e0c3a016a2ca8655f048191a36201f1c85b5aed","logprobs":[],"output_index":0,"sequence_number":12,"text":"Paris is sunny and 24°C."}
+
+
+12a
+event: response.content_part.done
+data: {"type":"response.content_part.done","content_index":0,"item_id":"msg_013e402bc35e0c3a016a2ca8655f048191a36201f1c85b5aed","output_index":0,"part":{"type":"output_text","annotations":[],"logprobs":[],"text":"Paris is sunny and 24°C."},"sequence_number":13}
+
+
+16f
+event: response.output_item.done
+data: {"type":"response.output_item.done","item":{"id":"msg_013e402bc35e0c3a016a2ca8655f048191a36201f1c85b5aed","type":"message","status":"completed","content":[{"type":"output_text","annotations":[],"logprobs":[],"text":"Paris is sunny and 24°C."}],"phase":"final_answer","role":"assistant"},"output_index":0,"sequence_number":14}
+
+
+645
+event: response.completed
+data: {"type":"response.completed","response":{"id":"resp_013e402bc35e0c3a016a2ca864cb188191b773ac78c250184d","object":"response","created_at":1781311588,"status":"completed","background":false,"completed_at":1781311589,"error":null,"frequency_penalty":0.0,"incomplete_details":null,"instructions":"You are a terse test assistant. Follow the instruction exactly.","max_output_tokens":null,"max_tool_calls":null,"model":"gpt-5.5","moderation":null,"output":[],"parallel_tool_calls":true,"presence_penalty":0.0,"previous_response_id":null,"prompt_cache_key":"0b64f5fa-04db-4136-92f4-890158de900c","prompt_cache_retention":"24h","reasoning":{"context":"current_turn","effort":"medium","summary":null},"safety_identifier":"user-1pmLfR01FlqQRFhW5OSz0u7I","service_tier":"default","store":false,"temperature":1.0,"text":{"format":{"type":"text"},"verbosity":"low"},"tool_choice":"auto","tool_usage":{"image_gen":{"input_tokens":0,"input_tokens_details":{"image_tokens":0,"text_tokens":0},"output_tokens":0,"output_tokens_details":{"image_tokens":0,"text_tokens":0},"total_tokens":0},"web_search":{"num_requests":0}},"tools":[{"type":"function","description":"Get the current weather for a city","name":"get_weather","parameters":{"properties":{"city":{"type":"string"}},"required":["city"],"type":"object"},"strict":false}],"top_logprobs":0,"top_p":0.98,"truncation":"disabled","usage":{"input_tokens":116,"input_tokens_details":{"cached_tokens":0},"output_tokens":12,"output_tokens_details":{"reasoning_tokens":0},"total_tokens":128},"user":null,"metadata":{}},"sequence_number":15}
+
+
+0
+

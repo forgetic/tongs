@@ -79,7 +79,9 @@ pub(crate) fn build_codex_request(
 }
 
 /// Converts tool definitions to Responses `function` tools. `strict: None`
-/// serializes as an explicit `null`, matching the codex request shape.
+/// serializes as an explicit `false`, matching the codex CLI's request shape
+/// (jig's authoritative codex recordings send `"strict": false`, never null —
+/// a divergence the tongs subject-conformance T3 gate caught).
 pub(crate) fn convert_responses_tools(tools: &[ToolDef], strict: Option<bool>) -> Vec<Value> {
     tools
         .iter()
@@ -89,7 +91,7 @@ pub(crate) fn convert_responses_tools(tools: &[ToolDef], strict: Option<bool>) -
                 "name": tool.name,
                 "description": tool.description,
                 "parameters": tool.parameters,
-                "strict": strict,
+                "strict": strict.unwrap_or(false),
             })
         })
         .collect()

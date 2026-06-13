@@ -74,10 +74,10 @@ fn builds_codex_request_body() {
     assert_eq!(body["input"][0]["role"], "user");
     assert_eq!(body["input"][0]["content"][0]["type"], "input_text");
     assert_eq!(body["input"][0]["content"][0]["text"], "hi");
-    // Codex tools carry an explicit null strict.
+    // Codex tools carry an explicit `strict: false`, like the codex CLI.
     assert_eq!(body["tools"][0]["type"], "function");
     assert_eq!(body["tools"][0]["name"], "read");
-    assert!(body["tools"][0]["strict"].is_null());
+    assert_eq!(body["tools"][0]["strict"], false);
     // No temperature unless set.
     assert!(body.get("temperature").is_none());
 }

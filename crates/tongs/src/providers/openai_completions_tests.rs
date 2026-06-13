@@ -200,9 +200,11 @@ fn reasoning_content_becomes_thinking() {
             "choices": [{"delta": {"reasoning_content": "hmm"}, "finish_reason": null}]
         })))
         .unwrap();
-    assert!(events.iter().any(
-        |event| matches!(event, StreamEvent::ThinkingDelta { delta, .. } if delta == "hmm")
-    ));
+    assert!(
+        events.iter().any(
+            |event| matches!(event, StreamEvent::ThinkingDelta { delta, .. } if delta == "hmm")
+        )
+    );
 }
 
 #[test]

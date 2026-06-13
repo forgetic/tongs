@@ -223,8 +223,7 @@ impl Tool for BashTool {
                     {
                         let _ = child.kill();
                         let (text, ring_dropped) = ring.into_text();
-                        let (output, _) =
-                            render_outcome(&text, ring_dropped, None, input.timeout);
+                        let (output, _) = render_outcome(&text, ring_dropped, None, input.timeout);
                         return Ok(ToolOutput {
                             is_error: true,
                             ..ToolOutput::text(output)

@@ -6,7 +6,9 @@ use async_trait::async_trait;
 use serde::Deserialize;
 use serde_json::json;
 
-use super::support::{DEFAULT_MAX_BYTES, DEFAULT_MAX_LINES, format_size, resolve_path, truncate_head};
+use super::support::{
+    DEFAULT_MAX_BYTES, DEFAULT_MAX_LINES, format_size, resolve_path, truncate_head,
+};
 use super::{Tool, ToolEffects, ToolOutput, ToolUpdate};
 use crate::model::{ContentBlock, ImageContent, TextContent};
 use crate::{Error, Result};
@@ -52,7 +54,12 @@ fn image_mime_type(path: &Path) -> Option<&'static str> {
 }
 
 /// Pure: page + truncate file text per the offset/limit/truncation contract.
-fn render_read(text: &str, path: &str, offset: Option<usize>, limit: Option<usize>) -> Result<String> {
+fn render_read(
+    text: &str,
+    path: &str,
+    offset: Option<usize>,
+    limit: Option<usize>,
+) -> Result<String> {
     let all_lines: Vec<&str> = text.split('\n').collect();
     let total_lines = all_lines.len();
     let start = offset.map(|offset| offset.saturating_sub(1)).unwrap_or(0);
@@ -180,7 +187,9 @@ impl Tool for ReadTool {
 
         let text = skein::runtime::spawn_blocking({
             let absolute = absolute.clone();
-            move || std::fs::read(&absolute).map(|bytes| String::from_utf8_lossy(&bytes).into_owned())
+            move || {
+                std::fs::read(&absolute).map(|bytes| String::from_utf8_lossy(&bytes).into_owned())
+            }
         })
         .await
         .map_err(|error| Error::Tool(format!("reading {}: {error}", absolute.display())))?;
@@ -216,7 +225,10 @@ mod tests {
 
     #[test]
     fn long_files_get_truncation_notice() {
-        let text = (1..=3000).map(|i| i.to_string()).collect::<Vec<_>>().join("\n");
+        let text = (1..=3000)
+            .map(|i| i.to_string())
+            .collect::<Vec<_>>()
+            .join("\n");
         let output = render_read(&text, "f", None, None).unwrap();
         assert!(output.contains("[Showing lines 1-2000 of 3000. Use offset=2001 to continue.]"));
     }

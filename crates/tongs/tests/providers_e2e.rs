@@ -25,8 +25,7 @@ use tongs::providers::create_provider;
 /// A bearer that satisfies the Codex provider's JWT account-id extraction:
 /// `e30` is `{}`, the payload decodes to
 /// `{"https://api.openai.com/auth":{"chatgpt_account_id":"acct-e2e"}}`.
-const FAKE_CODEX_JWT: &str =
-    "e30.eyJodHRwczovL2FwaS5vcGVuYWkuY29tL2F1dGgiOnsiY2hhdGdwdF9hY2NvdW50X2lkIjoiYWNjdC1lMmUifX0.sig";
+const FAKE_CODEX_JWT: &str = "e30.eyJodHRwczovL2FwaS5vcGVuYWkuY29tL2F1dGgiOnsiY2hhdGdwdF9hY2NvdW50X2lkIjoiYWNjdC1lMmUifX0.sig";
 
 /// The three dialects under test: tongs `api` string, provider id, credential,
 /// and the path + dialect jig should see the request on.
@@ -138,8 +137,8 @@ async fn drive(entry: &ModelEntry, context: &Context<'_>) -> Vec<StreamEvent> {
         .await
         .expect("stream starts");
     let mut events = Vec::new();
-    while let Some(event) = std::future::poll_fn(|cx| std::pin::Pin::new(&mut stream).poll_next(cx))
-        .await
+    while let Some(event) =
+        std::future::poll_fn(|cx| std::pin::Pin::new(&mut stream).poll_next(cx)).await
     {
         let event = event.expect("stream event");
         let terminal = matches!(event, StreamEvent::Done { .. } | StreamEvent::Error { .. });
@@ -187,7 +186,11 @@ fn text_round_trip(case: &DialectCase) {
         drive(&entry, &context).await
     });
 
-    assert_eq!(events.first(), Some(&StreamEvent::Start), "events: {events:?}");
+    assert_eq!(
+        events.first(),
+        Some(&StreamEvent::Start),
+        "events: {events:?}"
+    );
     assert_eq!(collected_text(&events), "hello from jig");
 
     let message = done_message(&events);
@@ -357,7 +360,11 @@ fn tool_loop_round_trip(case: &DialectCase) {
         .iter()
         .map(|request| request.view.as_ref().expect("view").prior_tool_results)
         .collect();
-    assert_eq!(views, vec![0, 1], "jig should see the tool result on turn 2");
+    assert_eq!(
+        views,
+        vec![0, 1],
+        "jig should see the tool result on turn 2"
+    );
 }
 
 #[test]

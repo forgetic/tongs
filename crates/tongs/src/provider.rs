@@ -61,11 +61,7 @@ pub trait Provider: Send + Sync {
     /// stream is returned, terminal failures arrive as
     /// [`StreamEvent::Error`] items carrying an assistant message with an
     /// error stop reason (mirroring the TS Pi stream contract).
-    async fn stream(
-        &self,
-        context: &Context<'_>,
-        options: &StreamOptions,
-    ) -> Result<EventStream>;
+    async fn stream(&self, context: &Context<'_>, options: &StreamOptions) -> Result<EventStream>;
 }
 
 /// The stream of [`StreamEvent`]s for one model response.
@@ -117,10 +113,7 @@ struct Iter {
 impl futures_core::Stream for Iter {
     type Item = Result<StreamEvent>;
 
-    fn poll_next(
-        mut self: Pin<&mut Self>,
-        _cx: &mut TaskContext<'_>,
-    ) -> Poll<Option<Self::Item>> {
+    fn poll_next(mut self: Pin<&mut Self>, _cx: &mut TaskContext<'_>) -> Poll<Option<Self::Item>> {
         Poll::Ready(self.items.pop_front())
     }
 }

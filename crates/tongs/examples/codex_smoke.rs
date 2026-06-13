@@ -35,8 +35,7 @@ async fn run() -> tongs::Result<()> {
     let bearer = resolve_chatgpt_bearer(&client, &auth_file).await?;
     eprintln!("bearer resolved from {}", auth_file.path().display());
 
-    let model_id =
-        std::env::var("TONGS_SMOKE_MODEL").unwrap_or_else(|_| "gpt-5.5".to_string());
+    let model_id = std::env::var("TONGS_SMOKE_MODEL").unwrap_or_else(|_| "gpt-5.5".to_string());
     let entry = ModelEntry {
         model: Model {
             id: model_id.clone(),
@@ -60,9 +59,7 @@ async fn run() -> tongs::Result<()> {
     let provider = create_provider(&entry, Some(client))?;
 
     let messages = vec![Message::User(UserMessage {
-        content: UserContent::Text(
-            "Reply with exactly the word: pong".to_string(),
-        ),
+        content: UserContent::Text("Reply with exactly the word: pong".to_string()),
         timestamp: 0,
     })];
     let context = Context {
@@ -78,10 +75,8 @@ async fn run() -> tongs::Result<()> {
 
     let mut stream = provider.stream(&context, &options).await?;
     let mut terminal = None;
-    while let Some(event) = std::future::poll_fn(|cx| {
-        std::pin::Pin::new(&mut stream).poll_next(cx)
-    })
-    .await
+    while let Some(event) =
+        std::future::poll_fn(|cx| std::pin::Pin::new(&mut stream).poll_next(cx)).await
     {
         match event? {
             StreamEvent::TextDelta { delta, .. } => eprint!("{delta}"),
@@ -101,15 +96,11 @@ async fn run() -> tongs::Result<()> {
     }
     eprintln!();
 
-    let message = terminal.ok_or_else(|| {
-        tongs::Error::Other("stream ended without a terminal event".to_string())
-    })?;
+    let message = terminal
+        .ok_or_else(|| tongs::Error::Other("stream ended without a terminal event".to_string()))?;
     println!(
         "stop={:?} usage: input={} cached={} output={}",
-        message.stop_reason,
-        message.usage.input,
-        message.usage.cache_read,
-        message.usage.output
+        message.stop_reason, message.usage.input, message.usage.cache_read, message.usage.output
     );
     let text: String = message
         .content

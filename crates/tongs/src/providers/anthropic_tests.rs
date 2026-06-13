@@ -395,10 +395,7 @@ fn resolves_anthropic_urls() {
         resolve_anthropic_url("http://127.0.0.1:9000/"),
         "http://127.0.0.1:9000/v1/messages"
     );
-    assert_eq!(
-        resolve_anthropic_url("http://h/v1"),
-        "http://h/v1/messages"
-    );
+    assert_eq!(resolve_anthropic_url("http://h/v1"), "http://h/v1/messages");
 }
 
 #[test]

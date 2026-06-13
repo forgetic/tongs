@@ -60,12 +60,10 @@ impl AuthFile {
 
     /// Reads and tolerantly parses one provider's OAuth entry.
     pub fn read_oauth(&self, provider_key: &str) -> Result<OAuthEntry> {
-        let raw = std::fs::read_to_string(&self.path).map_err(|error| {
-            Error::Auth(format!("reading {}: {error}", self.path.display()))
-        })?;
-        let root: Value = serde_json::from_str(&raw).map_err(|error| {
-            Error::Auth(format!("parsing {}: {error}", self.path.display()))
-        })?;
+        let raw = std::fs::read_to_string(&self.path)
+            .map_err(|error| Error::Auth(format!("reading {}: {error}", self.path.display())))?;
+        let root: Value = serde_json::from_str(&raw)
+            .map_err(|error| Error::Auth(format!("parsing {}: {error}", self.path.display())))?;
         let entry = root
             .get(provider_key)
             .and_then(Value::as_object)
@@ -94,8 +92,8 @@ impl AuthFile {
             ))
         };
         let nodejs_schema = entry.contains_key("access");
-        let access = string_field(entry, "access", "access_token")
-            .ok_or_else(|| missing("access token"))?;
+        let access =
+            string_field(entry, "access", "access_token").ok_or_else(|| missing("access token"))?;
         let refresh = string_field(entry, "refresh", "refresh_token")
             .ok_or_else(|| missing("refresh token"))?;
         let expires_ms = entry
@@ -117,8 +115,9 @@ impl AuthFile {
     /// entry and the entry's own unknown fields and schema spelling.
     pub fn write_oauth(&self, entry: &OAuthEntry) -> Result<()> {
         let mut root = match std::fs::read_to_string(&self.path) {
-            Ok(raw) => serde_json::from_str::<Value>(&raw)
-                .unwrap_or_else(|_| Value::Object(Map::new())),
+            Ok(raw) => {
+                serde_json::from_str::<Value>(&raw).unwrap_or_else(|_| Value::Object(Map::new()))
+            }
             Err(_) => Value::Object(Map::new()),
         };
         let object = root.as_object_mut().ok_or_else(|| {
@@ -133,9 +132,8 @@ impl AuthFile {
         );
         let serialized = serde_json::to_string_pretty(&root)
             .map_err(|error| Error::Auth(format!("serializing auth file failed: {error}")))?;
-        std::fs::write(&self.path, serialized).map_err(|error| {
-            Error::Auth(format!("writing {}: {error}", self.path.display()))
-        })
+        std::fs::write(&self.path, serialized)
+            .map_err(|error| Error::Auth(format!("writing {}: {error}", self.path.display())))
     }
 }
 
@@ -380,10 +378,8 @@ mod tests {
         });
         fixture.file.write_oauth(&entry).unwrap();
 
-        let reread: Value = serde_json::from_str(
-            &std::fs::read_to_string(fixture.file.path()).unwrap(),
-        )
-        .unwrap();
+        let reread: Value =
+            serde_json::from_str(&std::fs::read_to_string(fixture.file.path()).unwrap()).unwrap();
         assert_eq!(reread["openai-codex"]["access"], "new");
         assert_eq!(reread["openai-codex"]["refresh"], "new-r");
         assert_eq!(reread["openai-codex"]["accountId"], "acct-1");

@@ -83,9 +83,7 @@ pub(crate) fn convert_completions_messages(model: &Model, context: &Context<'_>)
                     messages.push(json!({ "role": "user", "content": text }));
                 }
                 UserContent::Blocks(blocks) => {
-                    let supports_images = model
-                        .input
-                        .contains(&crate::model::InputType::Image);
+                    let supports_images = model.input.contains(&crate::model::InputType::Image);
                     let parts: Vec<Value> = blocks
                         .iter()
                         .filter_map(|block| match block {
@@ -474,17 +472,10 @@ impl Provider for CompletionsProvider {
         "openai-completions"
     }
 
-    async fn stream(
-        &self,
-        context: &Context<'_>,
-        options: &StreamOptions,
-    ) -> Result<EventStream> {
+    async fn stream(&self, context: &Context<'_>, options: &StreamOptions) -> Result<EventStream> {
         let model = &self.entry.model;
         let body = build_completions_request(model, context, options);
-        let url = format!(
-            "{}/chat/completions",
-            model.base_url.trim_end_matches('/')
-        );
+        let url = format!("{}/chat/completions", model.base_url.trim_end_matches('/'));
 
         let mut request = self.client.post(&url).json(&body)?;
         for (name, value) in &model.headers {

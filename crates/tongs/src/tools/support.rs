@@ -216,7 +216,10 @@ mod tests {
     #[test]
     fn resolves_relative_and_absolute() {
         let cwd = Path::new("/work");
-        assert_eq!(resolve_path(cwd, "src/x.rs"), PathBuf::from("/work/src/x.rs"));
+        assert_eq!(
+            resolve_path(cwd, "src/x.rs"),
+            PathBuf::from("/work/src/x.rs")
+        );
         assert_eq!(resolve_path(cwd, "/etc/hosts"), PathBuf::from("/etc/hosts"));
     }
 

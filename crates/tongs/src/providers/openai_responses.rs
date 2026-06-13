@@ -103,10 +103,12 @@ pub(crate) fn convert_responses_messages(
 ) -> Vec<Value> {
     let mut items = Vec::new();
 
-    if include_system_prompt
-        && let Some(prompt) = context.system_prompt.as_deref()
-    {
-        let role = if model.reasoning { "developer" } else { "system" };
+    if include_system_prompt && let Some(prompt) = context.system_prompt.as_deref() {
+        let role = if model.reasoning {
+            "developer"
+        } else {
+            "system"
+        };
         items.push(json!({ "role": role, "content": prompt }));
     }
 
@@ -126,12 +128,9 @@ pub(crate) fn convert_responses_messages(
         }
     }
 
-    let supports_images = model
-        .input
-        .contains(&crate::model::InputType::Image);
+    let supports_images = model.input.contains(&crate::model::InputType::Image);
 
-    let mut msg_index = 0usize;
-    for message in context.messages.iter() {
+    for (msg_index, message) in context.messages.iter().enumerate() {
         match message {
             Message::User(user) => match &user.content {
                 UserContent::Text(text) => {
@@ -210,8 +209,9 @@ pub(crate) fn convert_responses_messages(
                                 "status": "completed",
                                 "id": id,
                             });
-                            if let Some(phase) =
-                                parsed.as_ref().and_then(|signature| signature.phase.clone())
+                            if let Some(phase) = parsed
+                                .as_ref()
+                                .and_then(|signature| signature.phase.clone())
                             {
                                 item.as_object_mut()
                                     .expect("item is an object")
@@ -220,10 +220,9 @@ pub(crate) fn convert_responses_messages(
                             items.push(item);
                         }
                         ContentBlock::ToolCall(call) => {
-                            let normalized =
-                                id_map.get(&call.id).cloned().unwrap_or_else(|| {
-                                    normalize_tool_call_id(&call.id, model, assistant)
-                                });
+                            let normalized = id_map.get(&call.id).cloned().unwrap_or_else(|| {
+                                normalize_tool_call_id(&call.id, model, assistant)
+                            });
                             let (call_id, item_id) = split_tool_call_id(&normalized);
                             let item_id = match item_id {
                                 Some(id) if different_model && id.starts_with("fc_") => None,
@@ -292,7 +291,6 @@ pub(crate) fn convert_responses_messages(
                 }));
             }
         }
-        msg_index += 1;
     }
 
     items
@@ -474,7 +472,10 @@ impl ResponsesAdapter {
                 let message = match error {
                     Some(error) => format!(
                         "{}: {}",
-                        error.get("code").and_then(Value::as_str).unwrap_or("unknown"),
+                        error
+                            .get("code")
+                            .and_then(Value::as_str)
+                            .unwrap_or("unknown"),
                         error
                             .get("message")
                             .and_then(Value::as_str)
@@ -726,16 +727,10 @@ impl ResponsesAdapter {
                     .map(|parts| {
                         parts
                             .iter()
-                            .filter_map(|part| {
-                                match part.get("type").and_then(Value::as_str) {
-                                    Some("output_text") => {
-                                        part.get("text").and_then(Value::as_str)
-                                    }
-                                    Some("refusal") => {
-                                        part.get("refusal").and_then(Value::as_str)
-                                    }
-                                    _ => None,
-                                }
+                            .filter_map(|part| match part.get("type").and_then(Value::as_str) {
+                                Some("output_text") => part.get("text").and_then(Value::as_str),
+                                Some("refusal") => part.get("refusal").and_then(Value::as_str),
+                                _ => None,
                             })
                             .collect::<Vec<_>>()
                             .join("")
@@ -914,11 +909,7 @@ impl Provider for CodexProvider {
         "openai-codex-responses"
     }
 
-    async fn stream(
-        &self,
-        context: &Context<'_>,
-        options: &StreamOptions,
-    ) -> Result<EventStream> {
+    async fn stream(&self, context: &Context<'_>, options: &StreamOptions) -> Result<EventStream> {
         let model = &self.entry.model;
         let token = options
             .api_key

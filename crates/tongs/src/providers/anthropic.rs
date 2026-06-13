@@ -79,10 +79,7 @@ pub fn claude_code_headers() -> Vec<(String, String)> {
             "anthropic-version".to_string(),
             ANTHROPIC_VERSION.to_string(),
         ),
-        (
-            "user-agent".to_string(),
-            CLAUDE_CODE_USER_AGENT.to_string(),
-        ),
+        ("user-agent".to_string(), CLAUDE_CODE_USER_AGENT.to_string()),
         ("x-app".to_string(), "cli".to_string()),
         (
             "X-Claude-Code-Session-Id".to_string(),
@@ -199,7 +196,8 @@ pub(crate) fn build_anthropic_request(
     }
 
     // Temperature is incompatible with extended thinking.
-    let thinking_enabled = matches!(options.thinking_level, Some(level) if level != ThinkingLevel::Off);
+    let thinking_enabled =
+        matches!(options.thinking_level, Some(level) if level != ThinkingLevel::Off);
     if let Some(temperature) = options.temperature
         && !thinking_enabled
     {
@@ -240,7 +238,9 @@ pub(crate) fn build_anthropic_request(
         object.insert("tools".to_string(), Value::Array(tools));
     }
 
-    if model.reasoning && let Some(level) = options.thinking_level {
+    if model.reasoning
+        && let Some(level) = options.thinking_level
+    {
         let thinking = match level {
             ThinkingLevel::Off => json!({ "type": "disabled" }),
             // Modern Claude models use adaptive thinking with an effort knob.
@@ -267,9 +267,7 @@ pub(crate) fn convert_anthropic_messages(
     context: &Context<'_>,
     oauth: bool,
 ) -> Vec<Value> {
-    let supports_images = model
-        .input
-        .contains(&crate::model::InputType::Image);
+    let supports_images = model.input.contains(&crate::model::InputType::Image);
     let mut messages: Vec<Value> = Vec::new();
     // Consecutive tool results merge into one user turn.
     let mut pending_tool_results: Vec<Value> = Vec::new();
@@ -485,10 +483,11 @@ impl AnthropicAdapter {
         read("input_tokens", |usage| &mut usage.input);
         read("output_tokens", |usage| &mut usage.output);
         read("cache_read_input_tokens", |usage| &mut usage.cache_read);
-        read("cache_creation_input_tokens", |usage| &mut usage.cache_write);
+        read("cache_creation_input_tokens", |usage| {
+            &mut usage.cache_write
+        });
         let totals = &mut self.output.usage;
-        totals.total_tokens =
-            totals.input + totals.output + totals.cache_read + totals.cache_write;
+        totals.total_tokens = totals.input + totals.output + totals.cache_read + totals.cache_write;
         self.output.usage.price_with(self.model_cost);
     }
 
@@ -528,13 +527,13 @@ impl AnthropicAdapter {
                         });
                     }
                     Some("thinking") => {
-                        self.output.content.push(ContentBlock::Thinking(
-                            ThinkingContent {
+                        self.output
+                            .content
+                            .push(ContentBlock::Thinking(ThinkingContent {
                                 thinking: String::new(),
                                 thinking_signature: Some(String::new()),
                                 redacted: false,
-                            },
-                        ));
+                            }));
                         self.open_blocks.insert(
                             index,
                             OpenBlock {
@@ -552,13 +551,13 @@ impl AnthropicAdapter {
                             .and_then(Value::as_str)
                             .unwrap_or_default()
                             .to_string();
-                        self.output.content.push(ContentBlock::Thinking(
-                            ThinkingContent {
+                        self.output
+                            .content
+                            .push(ContentBlock::Thinking(ThinkingContent {
                                 thinking: "[Reasoning redacted]".to_string(),
                                 thinking_signature: Some(data),
                                 redacted: true,
-                            },
-                        ));
+                            }));
                         self.open_blocks.insert(
                             index,
                             OpenBlock {
@@ -725,11 +724,13 @@ impl AnthropicAdapter {
             }
             "message_stop" => {
                 self.finished = true;
-                if matches!(self.output.stop_reason, StopReason::Error | StopReason::Aborted) {
+                if matches!(
+                    self.output.stop_reason,
+                    StopReason::Error | StopReason::Aborted
+                ) {
                     let reason = self.output.stop_reason;
                     if self.output.error_message.is_none() {
-                        self.output.error_message =
-                            Some("an unknown error occurred".to_string());
+                        self.output.error_message = Some("an unknown error occurred".to_string());
                     }
                     events.push(StreamEvent::Error {
                         reason,
@@ -810,11 +811,7 @@ impl Provider for AnthropicProvider {
         "anthropic-messages"
     }
 
-    async fn stream(
-        &self,
-        context: &Context<'_>,
-        options: &StreamOptions,
-    ) -> Result<EventStream> {
+    async fn stream(&self, context: &Context<'_>, options: &StreamOptions) -> Result<EventStream> {
         let model = &self.entry.model;
         let token = options
             .api_key

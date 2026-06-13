@@ -239,8 +239,12 @@ fn prepare_input(mut input: serde_json::Value) -> serde_json::Value {
     {
         object.insert("edits".to_string(), parsed);
     }
-    let old_text = object.get("oldText").and_then(|v| v.as_str().map(str::to_string));
-    let new_text = object.get("newText").and_then(|v| v.as_str().map(str::to_string));
+    let old_text = object
+        .get("oldText")
+        .and_then(|v| v.as_str().map(str::to_string));
+    let new_text = object
+        .get("newText")
+        .and_then(|v| v.as_str().map(str::to_string));
     if let (Some(old_text), Some(new_text)) = (old_text, new_text) {
         let edits = object
             .entry("edits")
@@ -418,7 +422,10 @@ mod tests {
                 new_text: "ALPHA".to_string(),
             },
         ];
-        assert_eq!(apply_edits(content, &edits, "f").unwrap(), "ALPHA\nbeta\nGAMMA\n");
+        assert_eq!(
+            apply_edits(content, &edits, "f").unwrap(),
+            "ALPHA\nbeta\nGAMMA\n"
+        );
     }
 
     #[test]

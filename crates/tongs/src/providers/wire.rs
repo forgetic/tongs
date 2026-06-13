@@ -98,8 +98,7 @@ impl<A: WireAdapter> futures_core::Stream for SseDriven<A> {
                     this.done = true;
                 }
                 Poll::Ready(Err(error)) => {
-                    this.queue
-                        .push_back(Err(Error::Http(error.to_string())));
+                    this.queue.push_back(Err(Error::Http(error.to_string())));
                     this.done = true;
                 }
             }

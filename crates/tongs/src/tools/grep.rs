@@ -10,9 +10,7 @@ use async_trait::async_trait;
 use serde::Deserialize;
 use serde_json::json;
 
-use super::support::{
-    DEFAULT_MAX_BYTES, GREP_MAX_LINE_LENGTH, resolve_path, truncate_head,
-};
+use super::support::{DEFAULT_MAX_BYTES, GREP_MAX_LINE_LENGTH, resolve_path, truncate_head};
 use super::{Tool, ToolEffects, ToolOutput, ToolUpdate};
 use crate::{Error, Result};
 
@@ -208,7 +206,9 @@ impl Tool for GrepTool {
                     {
                         continue;
                     }
-                    let Ok(bytes) = std::fs::read(path) else { continue };
+                    let Ok(bytes) = std::fs::read(path) else {
+                        continue;
+                    };
                     if bytes.contains(&0) {
                         // Binary file.
                         continue;

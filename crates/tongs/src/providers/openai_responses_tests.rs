@@ -197,7 +197,9 @@ fn adapter_folds_full_turn() {
     let mut adapter = ResponsesAdapter::new(&model, "openai-codex-responses");
     let mut events = Vec::new();
     let feed = |adapter: &mut ResponsesAdapter, value: Value| -> Vec<StreamEvent> {
-        adapter.on_sse(data_event(value)).expect("adapter accepts event")
+        adapter
+            .on_sse(data_event(value))
+            .expect("adapter accepts event")
     };
 
     events.extend(feed(
@@ -285,12 +287,25 @@ fn adapter_folds_full_turn() {
         }}),
     ));
     // Anything after the terminal is ignored.
-    assert!(adapter.on_sse(data_event(json!({"type": "x"}))).unwrap().is_empty());
+    assert!(
+        adapter
+            .on_sse(data_event(json!({"type": "x"})))
+            .unwrap()
+            .is_empty()
+    );
     assert!(adapter.on_eof().unwrap().is_empty());
 
     assert!(matches!(events[0], StreamEvent::Start));
-    assert!(events.iter().any(|e| matches!(e, StreamEvent::ThinkingDelta { delta, .. } if delta == "thinking…")));
-    assert!(events.iter().any(|e| matches!(e, StreamEvent::TextDelta { delta, .. } if delta == "lo")));
+    assert!(
+        events
+            .iter()
+            .any(|e| matches!(e, StreamEvent::ThinkingDelta { delta, .. } if delta == "thinking…"))
+    );
+    assert!(
+        events
+            .iter()
+            .any(|e| matches!(e, StreamEvent::TextDelta { delta, .. } if delta == "lo"))
+    );
     let tool_end = events
         .iter()
         .find_map(|e| match e {
@@ -320,7 +335,12 @@ fn adapter_folds_full_turn() {
         panic!("second block should be text");
     };
     assert_eq!(text.text, "hello");
-    assert!(text.text_signature.as_deref().unwrap().contains("final_answer"));
+    assert!(
+        text.text_signature
+            .as_deref()
+            .unwrap()
+            .contains("final_answer")
+    );
 }
 
 #[test]
@@ -337,7 +357,13 @@ fn adapter_surfaces_api_error_event() {
     };
     assert_eq!(*reason, StopReason::Error);
     assert_eq!(error.stop_reason, StopReason::Error);
-    assert!(error.error_message.as_deref().unwrap().contains("slow down"));
+    assert!(
+        error
+            .error_message
+            .as_deref()
+            .unwrap()
+            .contains("slow down")
+    );
 }
 
 #[test]
@@ -364,20 +390,24 @@ fn adapter_errors_on_truncated_stream() {
 fn done_markers_and_blank_data_are_skipped() {
     let model = codex_model();
     let mut adapter = ResponsesAdapter::new(&model, "openai-codex-responses");
-    assert!(adapter
-        .on_sse(SseEvent {
-            event: None,
-            data: "[DONE]".to_string()
-        })
-        .unwrap()
-        .is_empty());
-    assert!(adapter
-        .on_sse(SseEvent {
-            event: None,
-            data: "  ".to_string()
-        })
-        .unwrap()
-        .is_empty());
+    assert!(
+        adapter
+            .on_sse(SseEvent {
+                event: None,
+                data: "[DONE]".to_string()
+            })
+            .unwrap()
+            .is_empty()
+    );
+    assert!(
+        adapter
+            .on_sse(SseEvent {
+                event: None,
+                data: "  ".to_string()
+            })
+            .unwrap()
+            .is_empty()
+    );
 }
 
 #[test]
@@ -430,8 +460,7 @@ fn friendly_usage_limit_error() {
 
 /// Test-only base64url encoder (the crate only needs decoding).
 fn base64url_encode_for_test(input: &[u8]) -> String {
-    const ALPHABET: &[u8; 64] =
-        b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+    const ALPHABET: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
     let mut out = String::new();
     for chunk in input.chunks(3) {
         let b = [

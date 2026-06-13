@@ -25,10 +25,8 @@ struct Workspace {
 
 impl Workspace {
     fn new(name: &str) -> Self {
-        let root = std::env::temp_dir().join(format!(
-            "tongs-tools-it-{}-{name}",
-            std::process::id()
-        ));
+        let root =
+            std::env::temp_dir().join(format!("tongs-tools-it-{}-{name}", std::process::id()));
         std::fs::create_dir_all(&root).expect("create workspace");
         Self { root }
     }
@@ -47,7 +45,11 @@ fn write_read_edit_round_trip() {
     tongs::runtime::block_on(async move {
         let write = create_write_tool(&root);
         let output = write
-            .execute("c1", json!({"path": "src/main.rs", "content": "fn main() {}\n"}), None)
+            .execute(
+                "c1",
+                json!({"path": "src/main.rs", "content": "fn main() {}\n"}),
+                None,
+            )
             .await
             .expect("write");
         assert!(!output.is_error);
@@ -79,7 +81,11 @@ fn ls_grep_find_see_the_tree() {
     let workspace = Workspace::new("lgf");
     let root = workspace.root.clone();
     std::fs::create_dir_all(root.join("src")).unwrap();
-    std::fs::write(root.join("src/lib.rs"), "pub fn alpha() {}\npub fn beta() {}\n").unwrap();
+    std::fs::write(
+        root.join("src/lib.rs"),
+        "pub fn alpha() {}\npub fn beta() {}\n",
+    )
+    .unwrap();
     std::fs::write(root.join("README.md"), "# readme\n").unwrap();
 
     tongs::runtime::block_on(async move {
@@ -95,7 +101,10 @@ fn ls_grep_find_see_the_tree() {
             .await
             .expect("grep");
         let text = output_text(&output);
-        assert!(text.contains("src/lib.rs:1: pub fn alpha() {}"), "grep output: {text}");
+        assert!(
+            text.contains("src/lib.rs:1: pub fn alpha() {}"),
+            "grep output: {text}"
+        );
 
         let output = grep
             .execute("c3", json!({"pattern": "nothing-matches-this"}), None)
@@ -143,9 +152,8 @@ fn bash_runs_merges_and_reports_exit() {
             .expect("bash pwd");
         let text = output_text(&output);
         assert!(
-            text.trim_end().ends_with(
-                root.file_name().unwrap().to_str().unwrap()
-            ),
+            text.trim_end()
+                .ends_with(root.file_name().unwrap().to_str().unwrap()),
             "cwd should be the workspace: {text}"
         );
     });

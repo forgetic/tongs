@@ -25,20 +25,3 @@ regex = "1"
 
 [workspace.lints.rust]
 unsafe_code = "forbid"
-
-[profile.dev]
-opt-level = 0
-debug = 0
-incremental = true
-codegen-units = 256
-lto = false
-
-[profile.dev.package."*"]
-debug = 0
-
-[profile.test]
-opt-level = 0
-debug = 0
-incremental = true
-codegen-units = 256
-lto = false
